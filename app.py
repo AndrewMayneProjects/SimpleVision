@@ -1,21 +1,28 @@
+from flask import Flask, request, jsonify, send_from_directory, render_template
+import requests
+from flask_cors import CORS
 import os
-from flask import Flask, request, jsonify, send_from_directory
+from werkzeug.utils import secure_filename
 from base64 import b64decode
 from openai import OpenAI
 from dotenv import load_dotenv
 import json
 import base64
 import re
-import requests
 from datetime import datetime
 
-load_dotenv()
 
-client = OpenAI(
-    api_key=os.environ.get("OPENAI_API_KEY"),
-)
+app = Flask(__name__, static_folder='static', template_folder='templates')
+CORS(app)
 
-app = Flask(__name__)
+# Ensure there's a directory for temporary storage of uploaded files
+UPLOAD_FOLDER = 'tmp'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+    
+
+   
 
 def getCompletion(text, image_path, detail='auto'):
     
@@ -28,8 +35,6 @@ def getCompletion(text, image_path, detail='auto'):
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode('utf-8')
 
-    # Path to your image
-    image_path = "path_to_your_image.jpg"
 
     # Getting the base64 string
     base64_image = encode_image(image_path)
@@ -81,7 +86,41 @@ def getCompletion(text, image_path, detail='auto'):
 
 
 
+ 
 
+@app.route('/')
+def index():
+    # Serve the index.html file
+    return render_template('index.html')
+
+@app.route('/vision', methods=['POST'])
+def vision():
+    if 'image' not in request.files:
+        return jsonify({"error": "No image part"}), 400
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+    if file:
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        # Process the uploaded image and text fields
+        text = request.form.get('prompt', '')
+        detail = request.form.get('detail', 'auto')
+        
+        # Here you can add the logic to process the image and text using your getCompletion function or any other processing
+        # For example: result = getCompletion(text, filepath, detail)
+        # Then, you can return the result or any other response as needed
+        
+        response = getCompletion(text, filepath, detail)
+        
+        
+        return jsonify({"message": "File uploaded and processed", "filename": filename , "completion": response}), 200
 
 if __name__ == "__main__":
     app.run(debug=True, port=5006)
+    
+    
+    
+ 
