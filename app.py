@@ -75,8 +75,10 @@ def getCompletion(text, image_path, detail='auto'):
     json_data = response.json()
 
     print(json_data)
+    
+    total_tokens = json_data["usage"]["total_tokens"]
 
-    input_str = json_data["choices"][0]["message"]["content"]
+    input_str = json_data["choices"][0]["message"]["content"] + "<br><br>Total tokens: " + str(total_tokens)
     
     print("*" * 100)
     print(input_str)
