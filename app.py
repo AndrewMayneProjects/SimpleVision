@@ -76,13 +76,18 @@ def getCompletion(text, image_path, detail='auto'):
 
     print(json_data)
     
-    total_tokens = json_data["usage"]["total_tokens"]
-
-    input_str = json_data["choices"][0]["message"]["content"] + "<br><br>Total tokens: " + str(total_tokens)
+    if "choices" in json_data:
     
-    print("*" * 100)
-    print(input_str)
-    print("*" * 100)
+        total_tokens = json_data["usage"]["total_tokens"]
+        input_str = json_data["choices"][0]["message"]["content"] + "<br><br>Total tokens: " + str(total_tokens)
+        
+        print("*" * 100)
+        print(input_str)
+        print("*" * 100)
+    else:
+        input_str = "System refusal"
+        
+        
 
     return input_str
 
