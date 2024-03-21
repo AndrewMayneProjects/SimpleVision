@@ -2,7 +2,7 @@
 
 This Python Flask application serves as an interface for OpenAI's GPT-4 with Vision API, allowing users to upload images along with text prompts and detail levels to receive AI-generated descriptions or insights based on the uploaded content.
 
-![Demo Image](simple-vision-demo.jpg)
+![Demo Image](film-frames.png)
 
 
 From my blog post:
