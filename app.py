@@ -97,7 +97,6 @@ def getCompletion(text, image_path, detail='auto'):
 
 @app.route('/')
 def index():
-    # Serve the index.html file
     return render_template('index.html')
 
 @app.route('/vision', methods=['POST'])
@@ -116,9 +115,6 @@ def vision():
         text = request.form.get('prompt', '')
         detail = request.form.get('detail', 'auto')
         
-        # Here you can add the logic to process the image and text using your getCompletion function or any other processing
-        # For example: result = getCompletion(text, filepath, detail)
-        # Then, you can return the result or any other response as needed
         
         response = getCompletion(text, filepath, detail)
         
